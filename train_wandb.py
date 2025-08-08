@@ -6,6 +6,9 @@ from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.monitor import Monitor
 from wandb.integration.sb3 import WandbCallback
 import os
+from typing import Callable
+import argparse
+import uuid
 os.environ['XLA_PYTHON_CLIENT_PREALLOCATE'] = 'false'
 
 from tqdm import tqdm
@@ -27,7 +30,9 @@ class WandbWithGradientsCallback(BaseCallback):
                     "episode_reward": reward,
                     "episode_length": length,
                     "episode_reward_mean": reward / length,
-                    "step": self.num_timesteps
+                    "step": self.num_timesteps,
+                    "final_distance_from_target": info["episoode"]["distance_from_target"],
+                    "stepTargetReached": info["episode"]["step_target_reached"] if "step_target_reached" in info["episode"] else 0
                 })
         return True
 
@@ -43,23 +48,53 @@ class WandbWithGradientsCallback(BaseCallback):
             wandb.log({"grad_norm": total_norm, "step": self.num_timesteps})
 
 
+
 cfg = {
     "algo": "PPO",
     "env": "mySnake",
-    "max_n_steps": 10000,
-    "xml_file":"./assets/snakeMotors2_14_rough.xml",
+    "max_n_steps": 6400,
+    "xml_file":"./assets/snakeMotors2_14_highRough.xml",
     "total_timesteps": 1_000_000,
     "policy": "MlpPolicy",
-    "learning_rate": 3e-4,
-    "batch_size": 64,
+    "learning_rate": "lin_0.0003",
+    "batch_size": 128,
     "n_steps": 2048,
     "gamma": 0.99,
     "n_envs":4
 }
 if __name__ == "__main__":
-    run = wandb.init(project="snakebot-training", 
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--eps", type=float, default=0.25, help="Epsilon product ")
+    parser.add_argument("--xml_file", type=str, default="snakeMotors2_14_highRough.xml", help="XML file for the environment")
+    args = parser.parse_args()
+    eps = args.eps
+    cfg["xml_file"].replace(cfg["xml_file"].split("/")[-1], args.xml_file)
+    terrain = cfg["xml_file"].split("/")[-1].split("_")[-1].split(".")[0]
+    def linear_schedule(initial_value: float) -> Callable[[float], float]:
+        """
+        Linear learning rate schedule.
+
+        :param initial_value: Initial learning rate.
+        :return: schedule that computes
+        current learning rate depending on remaining progress
+        """
+        def func(progress_remaining: float) -> float:
+            """
+            Progress will decrease from 1 (beginning) to 0.
+
+            :param progress_remaining:
+            :return: current learning rate
+            """
+            return progress_remaining * initial_value
+
+        return func
+
+    run = wandb.init(project="snakebot-training-Unige-prova", 
             config=cfg,
-            sync_tensorboard=True, )
+            name = f"snakebot_{terrain}_{eps}_{uuid.uuid4().hex[:8]}",
+            sync_tensorboard=True,
+            tags=[terrain, f"eps_{eps}"],)
 
     if cfg["n_envs"]==1:
         from gymnasium.envs.registration import register
@@ -71,7 +106,7 @@ if __name__ == "__main__":
         )
         
         env = gym.make(cfg["env"], render_mode="rgb_array", xml_file=cfg["xml_file"])
-        env = Monitor(env)
+        env = Monitor(env,info_keywords = ('distance_from_target','step_target_reached',))
         
     else:
         from stable_baselines3.common.vec_env import SubprocVecEnv,VecMonitor
@@ -86,8 +121,8 @@ if __name__ == "__main__":
                                 entry_point="src.snake_word_pred_v4:snakeEnvPred",
                                 max_episode_steps=cfg["max_n_steps"],
                             )
-                env = gym.make(cfg["env"], render_mode="rgb_array", xml_file=cfg["xml_file"])
-                env = Monitor(env)
+                env = gym.make(cfg["env"], render_mode="rgb_array", xml_file=cfg["xml_file"],epsilon_product=eps)
+                env = Monitor(env,info_keywords = ('distance_from_target','step_target_reached',))
                 env.reset(seed=seed)
                 return env
             return _init
@@ -103,7 +138,7 @@ if __name__ == "__main__":
         "MlpPolicy",
         env,
         verbose=1,
-        learning_rate=wandb.config.learning_rate,
+        learning_rate=wandb.config.learning_rate if isinstance(wandb.config.learning_rate, float) else linear_schedule(float(cfg["learning_rate"].split("_")[1])),
         batch_size=wandb.config.batch_size,
         n_steps=wandb.config.n_steps,
         gamma=wandb.config.gamma,

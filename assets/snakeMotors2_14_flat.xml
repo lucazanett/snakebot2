@@ -1,0 +1,150 @@
+<mujoco model="snake">
+  <compiler angle="radian" coordinate="local" inertiafromgeom="true"/>
+  <option density="4000" integrator="RK4" timestep="0.01" viscosity="0.1"/>
+  <default>
+    <joint armature='0.1'  />
+  </default>
+  <asset>
+    <texture builtin="gradient" height="100" rgb1="1 1 1" rgb2="0 0 0" type="skybox" width="100"/>
+    <texture builtin="flat" height="1278" mark="cross" markrgb="1 1 1" name="texgeom" random="0.01" rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" type="cube" width="127"/>
+    <texture builtin="checker" height="100" name="texplane" rgb1="0 0 0" rgb2="0.8 0.8 0.8" type="2d" width="100"/>
+    <material name="MatPlane" reflectance="0.5" shininess="1" specular="1" texrepeat="30 30" texture="texplane"/>
+    <material name="geom" texture="texgeom" texuniform="true"/>
+  </asset>
+  <worldbody>
+    <light cutoff="100" diffuse="1 1 1" dir="-0 0 -1.3" directional="true" exponent="1" pos="0 0 1.3" specular=".1 .1 .1"/>
+    <geom conaffinity="1" condim="3" material="MatPlane" name="floor" pos="0 0 -0.05" rgba="0.8 0.9 0.8 1" size="40 40 40" type="plane"/>
+    <!--  ================= SNAKE ================= -->
+      <body name="head" pos="0 0 0">
+      <geom density="50" size="0.15 .15 .15"  type="ellipsoid" rgba="0 1 0 1" />
+      <camera name="track" mode="trackcom" pos="0 -3 3" xyaxes="1 0 0 0 1 1"/>  
+      <joint name = 'free_joint' type = "free" />
+      <body name="snake1_aux" pos="0 -0.1525 0">
+        <geom density="" size="0.005 0.005 0.005"  type="ellipsoid" rgba="0 0 0 1" quat="0.707123 0.70709 0 0" />
+        <joint axis="0 0 1" name="jointH_1" pos="0 0 0" type="hinge" range="-0.872665 0.872665" limited="true" />
+        <body name="snake1" pos="0 -0.1525 0">
+          <geom density="50" size="0.15 .15 .15"  type="ellipsoid" rgba="0.8 0.3 0.2 1" />
+          <joint axis="1 0 0" name="jointV_1" pos="0 0 0" type="hinge" range="-0.872665 0.872665" limited="true" />
+          <body name="snake2_aux" pos="0 -0.1525 0">
+        <geom density="50" size="0.005 0.005 0.005"  type="ellipsoid" rgba="0 0 0 1" quat="0.707123 0.70709 0 0" />
+        <joint axis="0 0 1" name="jointH_2" pos="0 0 0" type="hinge" range="-0.872665 0.872665" limited="true" />
+        <body name="snake2" pos="0 -0.1525 0">
+          <geom density="50" size="0.15 .15 .15"  type="ellipsoid" rgba="0.8 0.3 0.2 1" />
+          <joint axis="1 0 0" name="jointV_2" pos="0 0 0" type="hinge" range="-0.872665 0.872665" limited="true" />
+          <body name="snake3_aux" pos="0 -0.1525 0">
+            <geom density="50" size="0.005 0.005 0.005"  type="ellipsoid" rgba="0 0 0 1" quat="0.707123 0.70709 0 0" />
+            <joint axis="0 0 1" name="jointH_3" pos="0 0 0" type="hinge" range="-0.872665 0.872665" limited="true" />
+            <body name="snake3" pos="0 -0.1525 0">
+          <geom density="50" size="0.15 .15 .15"  type="ellipsoid" rgba="0.8 0.3 0.2 1" />
+          <joint axis="1 0 0" name="jointV_3" pos="0 0 0" type="hinge" range="-0.872665 0.872665" limited="true" />
+          <body name="snake4_aux" pos="0 -0.1525 0">
+            <geom density="50" size="0.005 0.005 0.005"  type="ellipsoid" rgba="0 0 0 1" quat="0.707123 0.70709 0 0" />
+            <joint axis="0 0 1" name="jointH_4" pos="0 0 0" type="hinge" range="-0.872665 0.872665" limited="true" />
+            <body name="snake4" pos="0 -0.1525 0">
+              <geom density="50" size="0.15 .15 .15"  type="ellipsoid" rgba="0.8 0.3 0.2 1" />
+              <joint axis="1 0 0" name="jointV_4" pos="0 0 0" type="hinge" range="-0.872665 0.872665" limited="true" />
+              <body name="snake5_aux" pos="0 -0.1525 0">
+            <geom density="50" size="0.005 0.005 0.005"  type="ellipsoid" rgba="0 0 0 1" quat="0.707123 0.70709 0 0" />
+            <joint axis="0 0 1" name="jointH_5" pos="0 0 0" type="hinge" range="-0.872665 0.872665" limited="true" />
+            <body name="snake5" pos="0 -0.1525 0">
+              <geom density="50" size="0.15 .15 .15"  type="ellipsoid" rgba="0.8 0.3 0.2 1" />
+              <joint axis="1 0 0" name="jointV_5" pos="0 0 0" type="hinge" range="-0.872665 0.872665" limited="true" />
+              <body name="snake6_aux" pos="0 -0.1525 0">
+                <geom density="50" size="0.005 0.005 0.005"  type="ellipsoid" rgba="0 0 0 1" quat="0.707123 0.70709 0 0" />
+                <joint axis="0 0 1" name="jointH_6" pos="0 0 0" type="hinge" range="-0.872665 0.872665" limited="true" />
+                <body name="snake6" pos="0 -0.1525 0">
+              <geom density="50" size="0.15 .15 .15"  type="ellipsoid" rgba="0.8 0.3 0.2 1" />
+              <joint axis="1 0 0" name="jointV_6" pos="0 0 0" type="hinge" range="-0.872665 0.872665" limited="true" />
+              <body name="snake7_aux" pos="0 -0.1525 0">
+                <geom density="50" size="0.005 0.005 0.005"  type="ellipsoid" rgba="0 0 0 1" quat="0.707123 0.70709 0 0" />
+                <joint axis="0 0 1" name="jointH_7" pos="0 0 0" type="hinge" range="-0.872665 0.872665" limited="true" />
+                <body name="snake7" pos="0 -0.1525 0">
+                  <geom density="50" size="0.15 .15 .15"  type="ellipsoid" rgba="0.8 0.3 0.2 1" />
+                  <joint axis="1 0 0" name="jointV_7" pos="0 0 0" type="hinge" range="-0.872665 0.872665" limited="true" />
+                
+                                </body>
+                              </body>
+                            </body>
+                          </body>
+                        </body>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+    <body name="target" pos="10 10 0.15">
+    <geom name="red_box" type="box" size="0.2 0.2 0.2" rgba="0 0 1 1"/>
+    <site name="target_site" pos="0 0 0" size="0.2" rgba="1 0 0 1"/>
+    </body>
+    </worldbody>
+  <actuator>
+    <!-- <motor ctrllimited="true" ctrlrange="-16 16" gear="150.0" joint="jointV_1"/>
+    <motor ctrllimited="true" ctrlrange="-1 1" gear="150.0" joint="jointV_2"/>
+    <motor ctrllimited="true" ctrlrange="-1 1" gear="150.0" joint="jointV_3"/>
+    <motor ctrllimited="true" ctrlrange="-1 1" gear="150.0" joint="jointV_4"/>
+    <motor ctrllimited="true" ctrlrange="-1 1" gear="150.0" joint="jointV_5"/>
+    <motor ctrllimited="true" ctrlrange="-1 1" gear="150.0" joint="jointV_6"/>
+    <motor ctrllimited="true" ctrlrange="-1 1" gear="150.0" joint="jointV_7"/>
+    <motor ctrllimited="true" ctrlrange="-1 1" gear="150.0" joint="jointV_8"/>
+    <motor ctrllimited="true" ctrlrange="-1 1" gear="150.0" joint="jointH_1"/>
+    <motor ctrllimited="true" ctrlrange="-1 1" gear="150.0" joint="jointH_2"/>
+    <motor ctrllimited="true" ctrlrange="-1 1" gear="150.0" joint="jointH_3"/>
+    <motor ctrllimited="true" ctrlrange="-1 1" gear="150.0" joint="jointH_4"/>
+    <motor ctrllimited="true" ctrlrange="-1 1" gear="150.0" joint="jointH_5"/>
+    <motor ctrllimited="true" ctrlrange="-1 1" gear="150.0" joint="jointH_6"/>
+    <motor ctrllimited="true" ctrlrange="-1 1" gear="150.0" joint="jointH_7"/>
+    <motor ctrllimited="true" ctrlrange="-1 1" gear="150.0" joint="jointH_8"/> -->
+    <position joint="jointV_1" name="jointV_1_controller" kp="30" inheritrange="1" ctrllimited="true"/>
+    <position joint="jointV_2" name="jointV_2_controller" kp="30" inheritrange="1" ctrllimited="true"/>
+    <position joint="jointV_3" name="jointV_3_controller" kp="30" inheritrange="1" ctrllimited="true"/>
+    <position joint="jointV_4" name="jointV_4_controller" kp="30" inheritrange="1" ctrllimited="true"/>
+    <position joint="jointV_5" name="jointV_5_controller" kp="30" inheritrange="1" ctrllimited="true"/>
+    <position joint="jointV_6" name="jointV_6_controller" kp="30" inheritrange="1" ctrllimited="true"/>
+    <position joint="jointV_7" name="jointV_7_controller" kp="30" inheritrange="1" ctrllimited="true"/>
+    <position joint="jointH_1" name="jointH_1_controller" kp="30" inheritrange="1" ctrllimited="true"/>
+    <position joint="jointH_2" name="jointH_2_controller" kp="30" inheritrange="1" ctrllimited="true"/>
+    <position joint="jointH_3" name="jointH_3_controller" kp="30" inheritrange="1" ctrllimited="true"/>
+    <position joint="jointH_4" name="jointH_4_controller" kp="30" inheritrange="1" ctrllimited="true"/>
+    <position joint="jointH_5" name="jointH_5_controller" kp="30" inheritrange="1" ctrllimited="true"/>
+    <position joint="jointH_6" name="jointH_6_controller" kp="30" inheritrange="1" ctrllimited="true"/>
+    <position joint="jointH_7" name="jointH_7_controller" kp="30" inheritrange="1" ctrllimited="true"/>
+    <!-- <velocity joint="jointV_1" name="jointV_1_controller" kv="10" ctrlrange="-200 200"/> -->
+    <!-- <velocity joint="jointV_2" name="jointV_2_controller" kv="10" ctrlrange="-1 1"/>
+    <velocity joint="jointV_3" name="jointV_3_controller" kv="10" ctrlrange="-1 1"/>
+    <velocity joint="jointV_4" name="jointV_4_controller" kv="10" ctrlrange="-1 1"/>
+    <velocity joint="jointV_5" name="jointV_5_controller" kv="10" ctrlrange="-1 1"/>
+    <velocity joint="jointV_6" name="jointV_6_controller" kv="10" ctrlrange="-1 1"/>
+    <velocity joint="jointV_7" name="jointV_7_controller" kv="10" ctrlrange="-1 1"/>
+    <velocity joint="jointV_8" name="jointV_8_controller" kv="10" ctrlrange="-1 1"/>
+    <velocity joint="jointH_1" name="jointH_1_controller" kv="10" ctrlrange="-1 1"/>
+    <velocity joint="jointH_2" name="jointH_2_controller" kv="10" ctrlrange="-1 1"/>
+    <velocity joint="jointH_3" name="jointH_3_controller" kv="10" ctrlrange="-1 1"/>
+    <velocity joint="jointH_4" name="jointH_4_controller" kv="10" ctrlrange="-1 1"/>
+    <velocity joint="jointH_5" name="jointH_5_controller" kv="10" ctrlrange="-1 1"/>
+    <velocity joint="jointH_6" name="jointH_6_controller" kv="10" ctrlrange="-1 1"/>
+    <velocity joint="jointH_7" name="jointH_7_controller" kv="10" ctrlrange="-1 1"/>
+    <velocity joint="jointH_8" name="jointH_8_controller" kv="10" ctrlrange="-1 1"/> -->
+    <!-- <intvelocity joint="jointV_1" name="jointV_1_controller" kp="1000" kv="10" inheritrange="10" ctrllimited="true"/> 
+    <intvelocity joint="jointV_2" name="jointV_2_controller" kp="1000" kv="10" inheritrange="10" ctrllimited="true"/>
+    <intvelocity joint="jointV_3" name="jointV_3_controller" kp="1000" kv="10" inheritrange="10" ctrllimited="true"/>
+    <intvelocity joint="jointV_4" name="jointV_4_controller" kp="1000" kv="10" inheritrange="10" ctrllimited="true"/>
+    <intvelocity joint="jointV_5" name="jointV_5_controller" kp="1000" kv="10" inheritrange="10" ctrllimited="true"/>
+    <intvelocity joint="jointV_6" name="jointV_6_controller" kp="1000" kv="10" inheritrange="10" ctrllimited="true"/>
+    <intvelocity joint="jointV_7" name="jointV_7_controller" kp="1000" kv="10" inheritrange="10" ctrllimited="true"/>
+    <intvelocity joint="jointV_8" name="jointV_8_controller" kp="1000" kv="10" inheritrange="10" ctrllimited="true"/>
+    <intvelocity joint="jointH_1" name="jointH_1_controller" kp="1000" kv="10" inheritrange="10" ctrllimited="true"/>
+    <intvelocity joint="jointH_2" name="jointH_2_controller" kp="1000" kv="10" inheritrange="10" ctrllimited="true"/>
+    <intvelocity joint="jointH_3" name="jointH_3_controller" kp="1000" kv="10" inheritrange="10" ctrllimited="true"/>
+    <intvelocity joint="jointH_4" name="jointH_4_controller" kp="1000" kv="10" inheritrange="10" ctrllimited="true"/>
+    <intvelocity joint="jointH_5" name="jointH_5_controller" kp="1000" kv="10" inheritrange="10" ctrllimited="true"/>
+    <intvelocity joint="jointH_6" name="jointH_6_controller" kp="1000" kv="10" inheritrange="10" ctrllimited="true"/>
+    <intvelocity joint="jointH_7" name="jointH_7_controller" kp="1000" kv="10" inheritrange="10" ctrllimited="true"/>
+    <intvelocity joint="jointH_8" name="jointH_8_controller" kp="1000" kv="10" inheritrange="10" ctrllimited="true"/> -->
+  </actuator>
+</mujoco>
+</mujoco>

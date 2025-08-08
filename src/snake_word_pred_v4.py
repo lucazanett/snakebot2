@@ -194,6 +194,8 @@ class snakeEnvPred(MujocoEnv, utils.EzPickle):
         #     low=-10.0, high=10.0, shape=(2*self.nJoints,), dtype=np.float32
         # )
         self.stepCounter = 0
+        self.stepTargetReached = 0
+        self.istargetReached = False
     def calculateCenterofMass(self):
         mass = self.model.body_mass
         xpos = self.model.body_pos
@@ -237,7 +239,7 @@ class snakeEnvPred(MujocoEnv, utils.EzPickle):
         self.jointHist.append(jointT)
         self.stepCounter +=1
         distance_from_origin = xy_position_after[1]
-        reward, reward_info = self._get_rew(velocity_to_target, action,comYVelocity,distance_from_origin)
+        reward, reward_info = self._get_rew(velocity_to_target, action,comYVelocity,distance_from_origin,distance_from_target_after)
         info = {
             "x_position": xy_position_after[0],
             "y_position": xy_position_after[1],
@@ -255,7 +257,7 @@ class snakeEnvPred(MujocoEnv, utils.EzPickle):
         # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return observation, reward, False, False, info
 
-    def _get_rew(self, velocity_to_target: float, action,comYVelocity,distance_from_origin):
+    def _get_rew(self, velocity_to_target: float, action,comYVelocity,distance_from_origin,distance_from_target):
         # forward_reward = self._forward_reward_weight * y_velocity
         # comVelocity_reward = self._com_velocity_weight * comYVelocity
         # signVel  = np.sign(velocity_to_target)
@@ -275,14 +277,19 @@ class snakeEnvPred(MujocoEnv, utils.EzPickle):
         forward_reward = velocity_to_target
         reward = np.sign(forward_reward) * (np.power(np.abs(forward_reward), self._epsilon_product) * np.power(predReward, 1 - self._epsilon_product))**2
 
-
+        if distance_from_target < 0.1 and self.stepTargetReached == 0:
+            self.istargetReached = True
+            self.stepTargetReached = self.stepCounter
         reward_info = {
             "reward_forward": forward_reward,
             "prediction_reward": predReward,
             # "reward_ctrl": -ctrl_cost,
             "total_reward": reward,
-        }
+            "is_target_reached": self.istargetReached,
 
+        }
+        if self.stepTargetReached > 0:
+            reward_info["step_target_reached"] = self.stepTargetReached
         return reward, reward_info
 
     def _get_obs(self):
@@ -312,6 +319,8 @@ class snakeEnvPred(MujocoEnv, utils.EzPickle):
         self.jointHist = []
         self.stepCounter = 0
         observation = self._get_obs()
+        self.stepTargetReached = 0
+        self.istargetReached = False
         return observation
 
     def _get_reset_info(self):
