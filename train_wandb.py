@@ -53,7 +53,7 @@ cfg = {
     "batch_size": 64,
     "n_steps": 2048,
     "gamma": 0.99,
-    "n_envs":1
+    "n_envs":4
 }
 
 run = wandb.init(project="snakebot-training", 
