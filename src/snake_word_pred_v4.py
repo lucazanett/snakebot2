@@ -109,7 +109,7 @@ class snakeEnvPred(MujocoEnv, utils.EzPickle):
 
     def __init__(
         self,
-        xml_file: str = "./assets/snakeMotors2_14_rough.xml",
+        xml_file: str = os.path.join(os.path.dirname(os.path.dirname(__file__)),"assets", "snakeMotors2_14_rough.xml"),
         frame_skip: int = 10,
         default_camera_config: Dict[str, Union[float, int]] = {},
         forward_reward_weight: float = 1.0,
@@ -255,7 +255,7 @@ class snakeEnvPred(MujocoEnv, utils.EzPickle):
         if self.render_mode == "human":
             self.render()
         # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
-        return observation, reward, False, False, info
+        return observation, reward, self.istargetReached, False, info
 
     def _get_rew(self, velocity_to_target: float, action,comYVelocity,distance_from_origin,distance_from_target):
         # forward_reward = self._forward_reward_weight * y_velocity
@@ -280,16 +280,16 @@ class snakeEnvPred(MujocoEnv, utils.EzPickle):
         if distance_from_target < 0.1 and self.stepTargetReached == 0:
             self.istargetReached = True
             self.stepTargetReached = self.stepCounter
+            reward += 10
         reward_info = {
             "reward_forward": forward_reward,
             "prediction_reward": predReward,
             # "reward_ctrl": -ctrl_cost,
             "total_reward": reward,
             "is_target_reached": self.istargetReached,
+            "step_target_reached": self.stepTargetReached
 
         }
-        if self.stepTargetReached > 0:
-            reward_info["step_target_reached"] = self.stepTargetReached
         return reward, reward_info
 
     def _get_obs(self):
@@ -329,3 +329,28 @@ class snakeEnvPred(MujocoEnv, utils.EzPickle):
             "y_position": self.data.qpos[1],
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
         }
+
+
+
+
+if __name__ == "__main__":
+    cfg = {"xml_file": os.path.join(os.path.dirname(os.path.dirname(__file__)),"assets", "snakeMotors2_14_medRough.xml")}
+    printstr = os.path.join(os.path.dirname(os.path.dirname(__file__)),"assets", "snakeMotors2_14_highRough.xml")
+    prova = "prova"
+    cfg["xml_file"] = cfg["xml_file"].replace(cfg["xml_file"].split("/")[-1], prova)
+
+    print(f"XML file path: {printstr}")
+    print(cfg)
+    
+    env = snakeEnvPred(
+        xml_file=printstr,
+        frame_skip=10,
+        default_camera_config={},
+        forward_reward_weight=1.0,
+        com_velocity_weight=3.0,
+        distance_reward_weight=0.1,
+        ctrl_cost_weight=1e-4,
+        reset_noise_scale=0.1,
+        epsilon_product=0.25,
+        predSamples=40,
+    )
