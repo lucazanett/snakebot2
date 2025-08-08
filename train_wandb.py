@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
         return func
 
-    run = wandb.init(project="snakebot-training-Unige-prova", 
+    run = wandb.init(project="snakebot-training-Unige", 
             config=cfg,
             name = f"snakebot_{terrain}_{eps}_{uuid.uuid4().hex[:8]}",
             sync_tensorboard=True,
