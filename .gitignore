@@ -1,1 +1,4 @@
-./wandb
+wandb/
+runs/
+**/__pycache__/
+*.out

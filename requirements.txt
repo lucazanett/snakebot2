@@ -13,3 +13,4 @@ wandb>=0.21.0
 ipykernel>=6.30.1
 rl-zoo3>=2.7.0
 tensorboard>=2.20.0
+jax[cuda]

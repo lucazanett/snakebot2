@@ -269,7 +269,7 @@ class snakeEnvPred(MujocoEnv, utils.EzPickle):
         if self.stepCounter > 1 and self._epsilon_product != 1:
             predReward = computePredInfo(jointHist).item()
             
-        #else:
+        else:
             predReward = 1
         #predReward = 1
         forward_reward = velocity_to_target
