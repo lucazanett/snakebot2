@@ -1,6 +1,5 @@
 
 from typing import Dict, Union
-from cpg3 import DiscreteMatsuokaCPG
 import numpy as np
 
 from gymnasium import utils
